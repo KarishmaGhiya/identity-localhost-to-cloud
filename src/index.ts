@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Server } from "http";
-
+import { readFileSync } from "fs";
 const app = express();
 //logs every request
 app.use(
@@ -32,7 +32,4 @@ let server: Server | undefined = undefined;
 server = app.listen(8080, () => {
   console.log(`Authorization code redirect server listening on port 8080`);
 });
-function readFileSync(arg0: string, arg1: { encoding: string; }) {
-    throw new Error("Function not implemented.");
-}
 
