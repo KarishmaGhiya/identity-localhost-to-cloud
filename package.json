@@ -15,7 +15,9 @@
     "@azure/identity": "^2.0.4",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "connect-ensure-login":"^0.1.1",
+    "passport": "^0.5.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.19.2",
