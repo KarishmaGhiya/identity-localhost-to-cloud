@@ -6,6 +6,7 @@ import * as session from "express-session";
 import * as connectEnsureLogin from "connect-ensure-login";
 import * as passport from "passport";
 import {Strategy} from "passport-local";
+import * as path from "path";
 
 const app = express();
 
@@ -104,8 +105,8 @@ app.get('/dashboard', (req, res) => {
    <a href="/secret">Members Only</a>`);
 });
 
-app.get('/secret', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  res.sendFile(__dirname + './userSession.html');
+app.get('/secret', (req, res) => {
+  res.sendFile(path.resolve("./userSession.html"));
 });
 
 app.get('/logout', function(req: express.Request, res: express.Response) {
@@ -122,9 +123,11 @@ app.get('/logout', function(req: express.Request, res: express.Response) {
   }
 });
 
-app.get('/browserAuthenticate.js',connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  // res.sendFile()
-})
+app.get('/browserAuthenticate.js', (req, res) => {
+  const browserPath = path.resolve(path.join(__dirname, '/../bundledBrowserCode'));
+  res.sendFile(browserPath +'/dist/index.js');
+});
+
 let server: Server | undefined = undefined;
 server = app.listen(8080, () => {
   console.log(`Authorization code redirect server listening on port 8080`);
