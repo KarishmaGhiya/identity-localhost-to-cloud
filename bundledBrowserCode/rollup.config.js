@@ -4,9 +4,9 @@ import json from "@rollup/plugin-json";
 import shim from "rollup-plugin-shim";
 
 export default {
-  input: "src/index.js",
+  input: "bundledBrowserCode/src/index.js",
   output: {
-    file: "rollup/dist/index.js",
+    file: "bundledBrowserCode/dist/index.js",
     format: "iife",
     name: "main",
   },

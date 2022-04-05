@@ -123,7 +123,7 @@ app.get('/logout', function(req: express.Request, res: express.Response) {
 });
 
 app.get('/browserAuthenticate.js',connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  res.sendFile()
+  // res.sendFile()
 })
 let server: Server | undefined = undefined;
 server = app.listen(8080, () => {

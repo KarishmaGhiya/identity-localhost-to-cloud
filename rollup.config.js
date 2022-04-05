@@ -4,7 +4,7 @@ import json from "@rollup/plugin-json";
 import shim from "rollup-plugin-shim";
 
 export default {
-  input: "rollup/src/index.js",
+  input: "dist/index.js",
   output: {
     file: "rollup/dist/index.js",
     format: "iife",

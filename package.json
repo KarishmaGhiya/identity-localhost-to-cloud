@@ -5,8 +5,6 @@
   "main": "index.js",
   "scripts": {
     "format": "prettier --write \"**/*.(ts|js|json)\"",
-    "pretest": "rm -fr dist/* && tsc -p tsconfig.json && rollup --config",
-    "test": "playwright test -c dist",
     "build": "tsc -p tsconfig.json  &&  rollup --config",
     "rollup:browser": "rollup --config bundledBrowserCode/rollup.config.js"
   },
