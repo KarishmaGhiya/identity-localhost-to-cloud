@@ -92,7 +92,8 @@ app.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 
-// app.post('/login', passport.authenticate('local',{failureRedirect: '/login', successReturnToOrRedirect: '/dashboard'}));
+// TODO not-imp: for some reason this approach did not work. The login page was stuck.
+// app.post('/login', passport.authenticate('local',{failureRedirect: '/login', successReturnToOrRedirect: '/dashboard'})); 
 
 app.get('/dashboard', (req, res) => {
   console.log("get dashboard");
@@ -121,7 +122,9 @@ app.get('/logout', function(req: express.Request, res: express.Response) {
   }
 });
 
-
+app.get('/browserAuthenticate.js',connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+  res.sendFile()
+})
 let server: Server | undefined = undefined;
 server = app.listen(8080, () => {
   console.log(`Authorization code redirect server listening on port 8080`);
