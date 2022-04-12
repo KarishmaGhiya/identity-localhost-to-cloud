@@ -4,14 +4,49 @@
 	<title>Example Login Form</title>
   </head>
   <body>
-	<form action="" method="post">
+	<div id="error-message"></div>
+	<form action="" method="post">	
   	<!-- user input-->
   	Username:<br>
-  	<input type="text" name="username" placeholder="Username" required><br><br>
+  	<input type="text" name="username" id ="username" placeholder="Username" required><br><br>
   	Password:<br>
-  	<input type="password" name="password" placeholder="Password" required><br><br>
+  	<input type="password" name="password" id="password" placeholder="Password" required><br><br>
   	<!-- submit button -->
-  	<input type="submit" value="login">
+  	<input type="submit" id="submitId" value="login">
 	</form>
   </body>
+  <script>
+	  const submitButton = document.getElementById("submitId");
+	  submitButton.onclick = async(event) => {
+		const uname = document.getElementById("username").value;
+		const pwd = document.getElementById("password").value;
+		const bodyData = JSON.stringify({username: uname, password: pwd});
+		event.preventDefault();
+		try{
+			const response = await fetch("/login", {
+				method: 'POST', // *GET, POST, PUT, DELETE, etc.
+				headers: {
+				'Content-Type': 'application/json'
+				},
+				body: bodyData // body data type must match "Content-Type" header
+			});
+			const responseJson = await response.json();
+			if(response.status !== 200){
+				document.getElementById("error-message").innerHTML = response.statusText + "" + responseJson.errorMessage ;
+				return;
+			}
+			
+			console.log(responseJson);
+			if(responseJson.success){
+				location.href = "/dashboard";
+			}
+			else{
+				document.getElementById("error-message").innerHTML = "Invalid response received. " +responseJson.errorMessage;
+			}
+		}
+		catch(e){
+			console.log(e);
+		}
+	  }
+  </script>
 </html>

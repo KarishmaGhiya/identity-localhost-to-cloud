@@ -3,43 +3,42 @@ import { Server } from "http";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
 import * as session from "express-session";
-import * as connectEnsureLogin from "connect-ensure-login";
-import * as passport from "passport";
-import {Strategy} from "passport-local";
+// import * as passport from "passport";
+// import {Strategy} from "passport-local";
 import * as path from "path";
-
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false })); // The object req.body will contain key-value pairs, where the value can be a string or array (when extended is false), or any type (when extended is true)
-
+//app.use(bodyParser.urlencoded({ extended: false })); // The object req.body will contain key-value pairs, where the value can be a string or array (when extended is false), or any type (when extended is true)
+app.use(bodyParser.json());
 app.use(session({
   secret: 'r8q,+&1LM3)CD*zAGpx1xm{NeQhc;#',
   resave: true,
   saveUninitialized: true}));
 // Configure More Middleware
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-passport.use(new Strategy(
-  function(username, password, done) {
-    if(username === "karishma"){
-      if(password === "ghiya"){
-        console.log("success login");
-        return done(null,{username:"karishma"});
-      }
-      else{
-        console.log("incorrect pwd");
-      return done(new Error("Incorrect password!"), false);
-      }
-    }
-    else{
-      console.log("incorrect username");
-      return done(new Error("Username doesn't exist!"), false);
-    }
+// passport.use(new Strategy(
+//   function(username, password, done) {
+//     if(username === "karishma"){
+//       if(password === "ghiya"){
+//         console.log("success login");
+//         return done(null,{username:"karishma"});
+//       }
+//       else{
+//         console.log("incorrect pwd");
+//       return done(new Error("Incorrect password!"), false);
+//       }
+//     }
+//     else{
+//       console.log("incorrect username");
+//       return done(new Error("Username doesn't exist!"), false);
+//     }
 
-  }
-));
+//   }
+// ));
+
 //logs every request
 app.use(
   (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -49,12 +48,12 @@ app.use(
 );
 
 // To use with sessions
-passport.serializeUser(function(user){
-  console.log(user);
-  console.log(JSON.stringify(user,null,2));
- return JSON.stringify(user,null,2);
-});
-passport.deserializeUser(function(user){ return JSON.parse(user)});
+// passport.serializeUser(function(user){
+//   console.log(user);
+//   console.log(JSON.stringify(user,null,2));
+//  return JSON.stringify(user,null,2);
+// });
+// passport.deserializeUser(function(user){ return JSON.parse(user)});
 
 /**
  * Endpoint that loads the index.js
@@ -84,19 +83,47 @@ app.get("/index", async (req: express.Request, res: express.Response) => {
 });
 
 app.post('/login', function(req, res, next) {
- passport.authenticate('local', function(err, user, info, status) {
-  if (err) { return next(err) }
-    if (!user) { 
-      console.log(`This ${user} seems invalid!`);
-      return res.redirect('/login') }
-    res.redirect('/dashboard');
-  })(req, res, next);
+console.log(req.body);
+  if(req.body.username === "karishma"){
+    if(req.body.password === "ghiya"){
+      console.log("success login");
+      (req.session as any).user = '{username:"karishma"}';
+      res.send({"success": true});
+    }
+    else{
+      console.log("incorrect pwd");
+      res.status(401).send({errorMessage: "Incorrect password!"});
+    }
+  }
+  else{
+    console.log("incorrect username");
+    res.status(401).send({errorMessage: "Username doesn't exist!"});
+  }
+
+//  passport.authenticate('local', function(err, user, info, status) {
+//    console.log(user);
+//    if(user){
+//     (req.session as any).user = user;
+//     res.redirect('/dashboard');
+//    }
+//   if (err) { return next(err) }
+//   if (!user) { 
+//     console.log(`This ${user} seems invalid!`);
+//     return res.redirect('/login') 
+//   }    
+//   })(req, res, next);
 });
+
+// app.post('/login', passport.authenticate('local',{}));
 
 // TODO not-imp: for some reason this approach did not work. The login page was stuck.
 // app.post('/login', passport.authenticate('local',{failureRedirect: '/login', successReturnToOrRedirect: '/dashboard'})); 
 
 app.get('/dashboard', (req, res) => {
+  console.log((req.session as any).user);
+  if(!(req.session as any).user){
+    return res.redirect('/login');
+  }
   console.log("get dashboard");
   res.send(`Hello! Your authentication was successful. Your session ID is ${req.sessionID} 
    and your session expires in ${req.session.cookie.maxAge} 
@@ -106,6 +133,9 @@ app.get('/dashboard', (req, res) => {
 });
 
 app.get('/secret', (req, res) => {
+  if(!(req.session as any).user){
+    return res.redirect('/login');
+  }
   res.sendFile(path.resolve("./userSession.html"));
 });
 
