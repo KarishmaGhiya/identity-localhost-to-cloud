@@ -6,6 +6,8 @@ import * as session from "express-session";
 // import * as passport from "passport";
 // import {Strategy} from "passport-local";
 import * as path from "path";
+import { AuthorizationCodeCredential } from "@azure/identity";
+import {setLogLevel} from "@azure/logger";
 const app = express();
 
 //app.use(bodyParser.urlencoded({ extended: false })); // The object req.body will contain key-value pairs, where the value can be a string or array (when extended is false), or any type (when extended is true)
@@ -156,6 +158,30 @@ app.get('/logout', function(req: express.Request, res: express.Response) {
 app.get('/browserAuthenticate.js', (req, res) => {
   const browserPath = path.resolve(path.join(__dirname, '/../bundledBrowserCode'));
   res.sendFile(browserPath +'/dist/index.js');
+});
+
+app.get("/azureRedirect", async(req: any, res: any) => {
+  // The redirect will either contain a "code" or an "error"
+  const authorizationCode = req.query["code"];
+  setLogLevel("verbose");
+  console.log(`authorization code = ${authorizationCode}`);
+  //for auth code cred, we need web for registering the redirect URIs
+  const authCred = new AuthorizationCodeCredential(
+    "27029f03-7c64-4ef6-88e4-14539e6c8d8c", 
+    "747a3a69-568f-4d40-9e9c-8f21472f246e",
+    authorizationCode,
+    "http://localhost:8080/azureRedirect")
+  try{
+    const result = await authCred.getToken("https://graph.microsoft.com/.default");
+    console.log(result);
+    res.send("Ok");
+  }
+  catch(e){
+ console.error(e);
+ res.send("not-ok");
+  }
+
+
 });
 
 let server: Server | undefined = undefined;
