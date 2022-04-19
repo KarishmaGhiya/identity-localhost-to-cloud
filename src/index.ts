@@ -8,6 +8,9 @@ import * as session from "express-session";
 import * as path from "path";
 import { AuthorizationCodeCredential } from "@azure/identity";
 import {setLogLevel} from "@azure/logger";
+import * as dotenv from "dotenv";
+// Initialize the environment
+dotenv.config();
 const app = express();
 
 //app.use(bodyParser.urlencoded({ extended: false })); // The object req.body will contain key-value pairs, where the value can be a string or array (when extended is false), or any type (when extended is true)
@@ -166,9 +169,12 @@ app.get("/azureRedirect", async(req: any, res: any) => {
   setLogLevel("verbose");
   console.log(`authorization code = ${authorizationCode}`);
   //for auth code cred, we need web for registering the redirect URIs
+  console.log(process.env.CLIENT_SECRET);
+   //"04b07795-8ddb-461a-bbee-02f9e1bf7b46", // the default public cleint id
+   // "747a3a69-568f-4d40-9e9c-8f21472f246e", // type web
   const authCred = new AuthorizationCodeCredential(
-    "27029f03-7c64-4ef6-88e4-14539e6c8d8c", 
-    "747a3a69-568f-4d40-9e9c-8f21472f246e",
+    "27029f03-7c64-4ef6-88e4-14539e6c8d8c",
+    "ed0e15fd-bb43-44e2-8d9c-b9c9758e0a46", //type public client
     authorizationCode,
     "http://localhost:8080/azureRedirect")
   try{

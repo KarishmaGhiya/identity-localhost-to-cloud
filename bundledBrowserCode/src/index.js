@@ -13,7 +13,10 @@ const { InteractiveBrowserCredential } = require("@azure/identity");
  }
 
  document.getElementById("nodeAuth").onclick = async() => {
-  location.replace(getAuthorizeUrl(tenantId,"747a3a69-568f-4d40-9e9c-8f21472f246e","https://graph.microsoft.com/.default","http://localhost:8080/azureRedirect"));
+   //04b07795-8ddb-461a-bbee-02f9e1bf7b46 - default
+   //747a3a69-568f-4d40-9e9c-8f21472f246e - type web
+   //"ed0e15fd-bb43-44e2-8d9c-b9c9758e0a46" //type public client
+  location.replace(getAuthorizeUrl(tenantId,"ed0e15fd-bb43-44e2-8d9c-b9c9758e0a46","https://graph.microsoft.com/.default","http://localhost:8080/azureRedirect"));
  }
 
  function getAuthorizeUrl(tenantId, clientId, scopes,redirectUri) {
