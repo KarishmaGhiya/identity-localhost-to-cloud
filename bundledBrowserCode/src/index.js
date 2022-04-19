@@ -13,17 +13,5 @@ const { InteractiveBrowserCredential } = require("@azure/identity");
  }
 
  document.getElementById("nodeAuth").onclick = async() => {
-  location.replace(getAuthorizeUrl(tenantId,"747a3a69-568f-4d40-9e9c-8f21472f246e","https://graph.microsoft.com/.default","http://localhost:8080/azureRedirect"));
+  location.replace("http://localhost:8080/startAzureRedirect");
  }
-
- function getAuthorizeUrl(tenantId, clientId, scopes,redirectUri) {
-  const params = new URLSearchParams({
-    client_id: clientId,
-    response_type: "code",
-    redirect_uri: redirectUri,
-    scope: scopes,
-  });
-  const authorityHost = "https://login.microsoftonline.com";
-  const query = params.toString();
-  return `${authorityHost}/${tenantId}/oauth2/v2.0/authorize?${query}`;
-}
