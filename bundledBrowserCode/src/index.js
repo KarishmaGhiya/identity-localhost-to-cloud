@@ -19,6 +19,10 @@ const { RedirectCredential } = require("@azure/identity-spa");
   let state = {
     "application": "state"
   }
+  const onPageLoadResult = credential.onPageLoad();
+  if(onPageLoadResult){
+    
+  }
 
  }
 
