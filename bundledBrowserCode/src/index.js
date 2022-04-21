@@ -1,4 +1,5 @@
 const { InteractiveBrowserCredential } = require("@azure/identity");
+const { RedirectCredential } = require("@azure/identity-spa");
 
  require("@azure/identity").InteractiveBrowserCredential;
 
@@ -6,10 +7,19 @@ const { InteractiveBrowserCredential } = require("@azure/identity");
 
  document.getElementById("aadAuth").onclick = async()=>{
    //for ibc, we need single page application for registering redirect URIs
-   const credential = new InteractiveBrowserCredential({clientId:"6d4da101-cca5-4e65-a83d-09c9b44cb72b", tenantId:tenantId, loginStyle:"redirect", redirectUri:"http://localhost:8080/secret"});
-   const scope = "https://graph.microsoft.com/.default";
-   const accessToken = await credential.getToken(scope);
-   console.log(accessToken);
+  //  const credential = new InteractiveBrowserCredential({clientId:"6d4da101-cca5-4e65-a83d-09c9b44cb72b", tenantId:tenantId, loginStyle:"redirect", redirectUri:"http://localhost:8080/secret"});
+  //  const scope = "https://graph.microsoft.com/.default";
+  //  const accessToken = await credential.getToken(scope);
+  //  console.log(accessToken);
+
+
+  //using RedirectCredential
+  const credential = new RedirectCredential({clientId:"6d4da101-cca5-4e65-a83d-09c9b44cb72b",tenantId:tenantId, redirectUri:"http://localhost:8080/secret"});
+  const scope = "https://graph.microsoft.com/.default";
+  let state = {
+    "application": "state"
+  }
+
  }
 
  document.getElementById("nodeAuth").onclick = async() => {
