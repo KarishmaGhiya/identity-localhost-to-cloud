@@ -1,15 +1,47 @@
-const { InteractiveBrowserCredential } = require("@azure/identity");
-
- require("@azure/identity").InteractiveBrowserCredential;
-
- const tenantId = "27029f03-7c64-4ef6-88e4-14539e6c8d8c";
+const { RedirectCredential } = require("@azure/identity-spa");
+require("@azure/identity").InteractiveBrowserCredential;
+const tenantId = "27029f03-7c64-4ef6-88e4-14539e6c8d8c";
 
  document.getElementById("aadAuth").onclick = async()=>{
-   //for ibc, we need single page application for registering redirect URIs
-   const credential = new InteractiveBrowserCredential({clientId:"6d4da101-cca5-4e65-a83d-09c9b44cb72b", tenantId:tenantId, loginStyle:"redirect", redirectUri:"http://localhost:8080/secret"});
-   const scope = "https://graph.microsoft.com/.default";
-   const accessToken = await credential.getToken(scope);
-   console.log(accessToken);
+  // using RedirectCredential
+  const credential = new RedirectCredential({clientId:"6d4da101-cca5-4e65-a83d-09c9b44cb72b",tenantId:tenantId, redirectUri:"http://localhost:8080/secret"});
+  const scope = "https://graph.microsoft.com/.default";
+  // Trying to show how the developer might find this feature useful
+  let state = {
+    "application": "state"
+  }
+  // Just trying to retrieve the existing state, before getting the token
+  const onPageLoadResult = await credential.onPageLoad();
+  if(onPageLoadResult.state){
+    console.log(onPageLoadResult);
+    // console.log(JSON.parse(onPageLoadResult));
+    try{
+    state = JSON.parse(onPageLoadResult.state);
+    }
+    catch(e){
+      console.log("Error parsing the state, now will try to decode the hexadecimal object...",e);
+      state = atob(onPageLoadResult.state);
+      try{
+        state = JSON.parse(state);
+      }
+      catch(e){
+        console.log("Error parsing the state 2nd time", e)
+      }
+    }
+  }
+  try{
+    await credential.getToken(scope);
+  }
+  catch(e){
+    if(e.name === "AuthenticationRequiredError"){
+      console.log("calling authenticate ...", state);
+      const authenticationRecord = await credential.authenticate(scope,{state: JSON.stringify(state)});
+      console.log("after calling authenticate ...");
+      window.localStorage.setItem("authentication-record",authenticationRecord);
+    }
+  }
+  const accessToken = await credential.getToken(scope);
+  console.log(accessToken);
  }
 
  document.getElementById("nodeAuth").onclick = async() => {
